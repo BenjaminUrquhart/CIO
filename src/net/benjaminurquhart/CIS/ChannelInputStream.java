@@ -25,6 +25,7 @@ public class ChannelInputStream extends InputStream {
 	public ChannelInputStream(PrivateChannel channel, boolean ignoreBots) {
 		this.listener = new TextListener(channel, ignoreBots);
 	}
+	
 	public ChannelInputStream(VoiceChannel channel) {
 		this.listener = new AudioListener(channel);
 	}

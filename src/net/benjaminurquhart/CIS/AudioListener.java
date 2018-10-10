@@ -18,6 +18,7 @@ public class AudioListener implements AudioReceiveHandler, Listener{
 		if(guild.getAudioManager().isConnected()) {
 			throw new IllegalStateException("Already receiving audio from this guild!");
 		}
+		buff = new ArrayList<>();
 		guild.getAudioManager().setReceivingHandler(this);
 		guild.getAudioManager().openAudioConnection(channel);
 	}
