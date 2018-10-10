@@ -11,6 +11,7 @@ import net.dv8tion.jda.core.entities.TextChannel;
 public class ChannelInputStream extends InputStream {
 	
 	private Listener listener;
+	private boolean closed;
 	
 	public ChannelInputStream(TextChannel channel, boolean ignoreBots) {
 		this.listener = new Listener(channel, ignoreBots);
@@ -29,6 +30,9 @@ public class ChannelInputStream extends InputStream {
 	}
 	@Override
 	public int read() throws IOException {
+		if(closed) {
+			throw new IOException("Stream closed");
+		}
 		try {
 			return listener.getNextChar();
 		}
@@ -40,5 +44,6 @@ public class ChannelInputStream extends InputStream {
 	public void close() throws IOException {
 		listener.close();
 		super.close();
+		closed = true;
 	}
 }
