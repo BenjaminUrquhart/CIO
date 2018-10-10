@@ -53,9 +53,6 @@ public class TextListener extends ListenerAdapter implements Listener{
 			buff += event.getMessage().getContentRaw() + "\n";
 		}
 	}
-	public boolean hasNext() {
-		return buff.length() > 0;
-	}
 	public int getNext() {
 		int next = (int)buff.charAt(0);
 		buff = buff.substring(1);

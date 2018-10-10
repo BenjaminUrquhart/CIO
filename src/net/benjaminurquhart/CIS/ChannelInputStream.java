@@ -28,6 +28,9 @@ public class ChannelInputStream extends InputStream {
 	
 	public ChannelInputStream(VoiceChannel channel) {
 		this.listener = new AudioListener(channel);
+		while(!((AudioListener)listener).isLoaded()) {
+			continue;
+		}
 	}
 	@Override
 	public int available() {

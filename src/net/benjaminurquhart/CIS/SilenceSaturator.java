@@ -18,7 +18,7 @@ public class SilenceSaturator implements AudioSendHandler{
 	@Override
 	public boolean canProvide() {
 		if(send) {
-			if(Instant.now().getEpochSecond() - startTime > 5) {
+			if(Instant.now().getEpochSecond() - startTime > 2) {
 				send = false;
 			}
 		}

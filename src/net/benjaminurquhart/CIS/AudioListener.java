@@ -13,19 +13,23 @@ public class AudioListener implements AudioReceiveHandler, Listener{
 	private Guild guild;
 	private ArrayList<Byte> buff;
 	private boolean ready;
+	private boolean loaded;
+	private long cached;
 	
 	public AudioListener(VoiceChannel channel) {
 		this.guild = channel.getGuild();
 		if(guild.getAudioManager().isConnected()) {
 			throw new IllegalStateException("Already receiving audio from this guild!");
 		}
-		buff = new ArrayList<>();
+		this.buff = new ArrayList<>();
+		this.cached = 0;
 		guild.getAudioManager().setReceivingHandler(this);
 		guild.getAudioManager().setSendingHandler(new SilenceSaturator());
 		guild.getAudioManager().openAudioConnection(channel);
 	}
 	@Override
 	public boolean canReceiveCombined() {
+		loaded = true;
 		return true;
 	}
 
@@ -40,6 +44,7 @@ public class AudioListener implements AudioReceiveHandler, Listener{
 		for(byte b : arr) {
 			buff.add(b);
 		}
+		cached += arr.length;
 		ready = true;
 	}
 
@@ -53,17 +58,22 @@ public class AudioListener implements AudioReceiveHandler, Listener{
 		while(!ready){
 			continue;
 		}
+		cached--;
 		return buff.remove(0);
 	}
 
 	@Override
 	public int available() {
-		return buff.size();
+		return (int)cached;
 	}
 
 	@Override
 	public void close() {
 		guild.getAudioManager().closeAudioConnection();
+	}
+	
+	public boolean isLoaded() {
+		return loaded;
 	}
 
 }
