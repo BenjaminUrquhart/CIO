@@ -12,6 +12,7 @@ public class AudioListener implements AudioReceiveHandler, Listener{
 	
 	private Guild guild;
 	private ArrayList<Byte> buff;
+	private boolean ready;
 	
 	public AudioListener(VoiceChannel channel) {
 		this.guild = channel.getGuild();
@@ -20,6 +21,7 @@ public class AudioListener implements AudioReceiveHandler, Listener{
 		}
 		buff = new ArrayList<>();
 		guild.getAudioManager().setReceivingHandler(this);
+		guild.getAudioManager().setSendingHandler(new SilenceSaturator());
 		guild.getAudioManager().openAudioConnection(channel);
 	}
 	@Override
@@ -38,6 +40,7 @@ public class AudioListener implements AudioReceiveHandler, Listener{
 		for(byte b : arr) {
 			buff.add(b);
 		}
+		ready = true;
 	}
 
 	@Override
@@ -47,6 +50,9 @@ public class AudioListener implements AudioReceiveHandler, Listener{
 
 	@Override
 	public int getNext() {
+		while(!ready){
+			continue;
+		}
 		return buff.remove(0);
 	}
 
