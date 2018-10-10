@@ -46,13 +46,12 @@ public class Listener extends ListenerAdapter{
 	
 	@Override
 	public void onMessageReceived(MessageReceivedEvent event) {
-		if(!event.getChannel().getId().equals(channelId) || (event.getAuthor().isBot() && ignoreBots)) {
-			return;
+		if(event.getChannel().getId().equals(channelId) && !(ignoreBots && event.getAuthor().isBot())) {
+			if(!((!isPrivate) && event.getGuild().getId().equals(guildId))) {
+				return;
+			}
+			buff += event.getMessage().getContentRaw() + "\n";
 		}
-		if(!isPrivate && !event.getGuild().getId().equals(guildId)) {
-			return;
-		}
-		buff += event.getMessage().getContentRaw() + "\n";
 	}
 	public int getNextChar() {
 		if(buff.length() == 0) {
@@ -61,6 +60,9 @@ public class Listener extends ListenerAdapter{
 		int next = (int)buff.charAt(0);
 		buff = buff.substring(1);
 		return next;
+	}
+	public int available() {
+		return buff.length();
 	}
 	public void close() {
 		jda.removeEventListener(this);

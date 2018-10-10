@@ -24,11 +24,16 @@ public class ChannelInputStream extends InputStream {
 		this.listener = new Listener(channel, ignoreBots);
 	}
 	@Override
+	public int available() {
+		return listener.available();
+	}
+	@Override
 	public int read() throws IOException {
 		try {
 			return listener.getNextChar();
 		}
 		catch(Exception e) {
+			e.printStackTrace();
 			return -1;
 		}
 	}
