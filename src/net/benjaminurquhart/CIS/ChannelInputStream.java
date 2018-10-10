@@ -42,6 +42,9 @@ public class ChannelInputStream extends InputStream {
 	}
 	@Override
 	public void close() throws IOException {
+		if(closed) {
+			throw new IOException("Stream already closed!");
+		}
 		listener.close();
 		super.close();
 		closed = true;
