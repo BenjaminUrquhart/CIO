@@ -33,7 +33,6 @@ public class ChannelInputStream extends InputStream {
 			return listener.getNextChar();
 		}
 		catch(Exception e) {
-			e.printStackTrace();
 			return -1;
 		}
 	}
