@@ -46,21 +46,31 @@ public class TextListener extends ListenerAdapter implements Listener{
 	
 	@Override
 	public void onMessageReceived(MessageReceivedEvent event) {
-		if(event.getChannel().getId().equals(channelId) && !(ignoreBots && event.getAuthor().isBot())) {
-			if(!((!isPrivate) && event.getGuild().getId().equals(guildId))) {
-				return;
-			}
-			buff += event.getMessage().getContentRaw() + "\n";
+		if(ignoreBots && event.getAuthor().isBot()){
+			return;
 		}
+		if((!isPrivate) && !event.getGuild().getId().equals(guildId)){
+			return;
+		}
+		if(!event.getChannel().getId().equals(channelId)){
+			return;
+		}
+		buff += event.getMessage().getContentRaw() + "\n";
 	}
+	@Override
 	public int getNext() {
+		while(buff.isEmpty()){
+			continue;
+		}
 		int next = (int)buff.charAt(0);
 		buff = buff.substring(1);
 		return next;
 	}
+	@Override
 	public int available() {
 		return buff.length();
 	}
+	@Override
 	public void close() {
 		jda.removeEventListener(this);
 	}

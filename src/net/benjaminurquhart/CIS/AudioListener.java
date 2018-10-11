@@ -55,7 +55,7 @@ public class AudioListener implements AudioReceiveHandler, Listener{
 
 	@Override
 	public int getNext() {
-		while(!ready){
+		while(!ready || available() == 0){
 			continue;
 		}
 		cached--;
