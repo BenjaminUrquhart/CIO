@@ -7,4 +7,4 @@ Progress:
 - TextChannel: Working
 - MessageChannel: Working
 - PrivateChannel: Untested
-- VoiceChannel: NOT Working
+- VoiceChannel: NOT Working. No sure if it's Discord audio being funky again.
