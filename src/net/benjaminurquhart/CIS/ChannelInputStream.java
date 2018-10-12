@@ -41,7 +41,10 @@ public class ChannelInputStream extends InputStream {
 	public Channel getChannel(){
 		return this.channel;
 	}
-	public boolean hasNext(){
+	public boolean hasNext() throws InterruptedException{
+		if(listener.isDeleted() && available() == 0) {
+			throw new InterruptedException("Channel deleted");
+		}
 		return available() > 0;
 	}
 	@Override

@@ -37,18 +37,24 @@ public class Main {
 		System.out.println("Ready.");
 		int next;
 		while(loop){
-			if(cis.hasNext()){
-				next = cis.read();
-				if(isVoice){
-					System.out.println(next);
-					if(Instant.now().getEpochSecond() - startTime > 5){
-						cis.close();
-						loop = false;
+			try {
+				if(cis.hasNext()){
+					next = cis.read();
+					if(isVoice){
+						System.out.println(next);
+						if(Instant.now().getEpochSecond() - startTime > 5){
+							cis.close();
+							loop = false;
+						}
+					}
+					else{
+						System.out.print((char)next);
 					}
 				}
-				else{
-					System.out.print((char)next);
-				}
+			}
+			catch(InterruptedException e) {
+				e.printStackTrace();
+				System.exit(0);
 			}
 		}
 		cis.close();

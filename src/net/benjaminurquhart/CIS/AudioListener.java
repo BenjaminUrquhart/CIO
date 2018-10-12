@@ -78,7 +78,10 @@ public class AudioListener extends ListenerAdapter implements AudioReceiveHandle
 	public int available() {
 		return (int)cached;
 	}
-
+	@Override
+	public boolean isDeleted() {
+		return deleted;
+	}
 	@Override
 	public void close() {
 		guild.getAudioManager().closeAudioConnection();

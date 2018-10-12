@@ -87,4 +87,8 @@ public class TextListener extends ListenerAdapter implements Listener{
 	public void close() {
 		jda.removeEventListener(this);
 	}
+	@Override
+	public boolean isDeleted() {
+		return deleted;
+	}
 }
