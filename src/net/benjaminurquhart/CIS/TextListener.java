@@ -1,11 +1,14 @@
 package net.benjaminurquhart.CIS;
 
+import java.io.IOException;
+
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.PrivateChannel;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import net.dv8tion.jda.core.events.channel.text.TextChannelDeleteEvent;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 public class TextListener extends ListenerAdapter implements Listener{
@@ -14,6 +17,7 @@ public class TextListener extends ListenerAdapter implements Listener{
 	private String channelId;
 	private String guildId;
 	private String buff = "";
+	private boolean deleted;
 	private boolean isPrivate;
 	private boolean ignoreBots;
 	
@@ -58,8 +62,17 @@ public class TextListener extends ListenerAdapter implements Listener{
 		buff += event.getMessage().getContentRaw() + "\n";
 	}
 	@Override
-	public int getNext() {
+	public void onTextChannelDelete(TextChannelDeleteEvent event) {
+		if(event.getChannel().getId().equals(channelId) && event.getGuild().getId().equals(guildId)) {
+			deleted = true;
+		}
+	}
+	@Override
+	public int getNext() throws IOException {
 		while(buff.isEmpty()){
+			if(deleted) {
+				throw new IOException("Channel deleted");
+			}
 			continue;
 		}
 		int next = (int)buff.charAt(0);
