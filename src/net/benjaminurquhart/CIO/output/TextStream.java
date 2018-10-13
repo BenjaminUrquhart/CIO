@@ -26,7 +26,7 @@ public class TextStream implements ChannelStream{
 			throw new IOException("Stream closed");
 		}
 		while(buff.length() > 2000) {
-			channel.sendMessage(buff.substring(0, 1999)).queue();
+			channel.sendMessage(buff.substring(0, 2000)).queue();
 			buff = buff.substring(2000);
 		}
 		channel.sendMessage(buff).queue();
