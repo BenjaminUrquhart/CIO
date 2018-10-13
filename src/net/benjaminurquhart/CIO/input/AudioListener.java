@@ -8,7 +8,7 @@ import net.dv8tion.jda.core.audio.CombinedAudio;
 import net.dv8tion.jda.core.audio.UserAudio;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.VoiceChannel;
-import net.dv8tion.jda.core.events.channel.text.TextChannelDeleteEvent;
+import net.dv8tion.jda.core.events.channel.voice.VoiceChannelDeleteEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
 public class AudioListener extends ListenerAdapter implements AudioReceiveHandler, Listener{
@@ -25,8 +25,8 @@ public class AudioListener extends ListenerAdapter implements AudioReceiveHandle
 	public AudioListener(VoiceChannel channel) {
 		this.guild = channel.getGuild();
 		this.channelId = channel.getId();
-		this.guildId = channel.getGuild().getId();
-		if(guild.getAudioManager().isConnected()) {
+		this.guildId = guild.getId();
+		if(guild.getAudioManager().isConnected() && guild.getAudioManager().getReceiveHandler() != null) {
 			throw new IllegalStateException("Already receiving audio from this guild!");
 		}
 		this.buff = new ArrayList<>();
@@ -89,7 +89,7 @@ public class AudioListener extends ListenerAdapter implements AudioReceiveHandle
 	}
 	
 	@Override
-	public void onTextChannelDelete(TextChannelDeleteEvent event) {
+	public void onVoiceChannelDelete(VoiceChannelDeleteEvent event) {
 		if(event.getChannel().getId().equals(channelId) && event.getGuild().getId().equals(guildId)) {
 			deleted = true;
 		}

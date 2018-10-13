@@ -49,6 +49,9 @@ public class ChannelOutputStream extends OutputStream{
 	}
 	@Override
 	public void write(int data) throws IOException {
+		if(closed) {
+			throw new IOException("Stream closed");
+		}
 		if(!hasPerms()) {
 			throw new IOException("Failed to write to stream: Missing Permissions");
 		}
@@ -64,6 +67,7 @@ public class ChannelOutputStream extends OutputStream{
 			throw new IOException("Stream closed");
 		}
 		stream.close();
+		closed = true;
 	}
 	
 }

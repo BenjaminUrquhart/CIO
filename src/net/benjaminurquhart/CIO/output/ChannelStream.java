@@ -2,9 +2,11 @@ package net.benjaminurquhart.CIO.output;
 
 import java.io.IOException;
 
-interface ChannelStream {
+interface ChannelStream{
 
+	boolean isDeleted();
 	void flush() throws IOException;
 	void close() throws IOException;
 	void write(byte b) throws IOException;
+	
 }
