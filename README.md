@@ -9,6 +9,7 @@ InputStream:
 - MessageChannel: Working
 - PrivateChannel: Untested
 - VoiceChannel: NOT Working. Not sure if it's Discord audio being funky again.
+
 OutputStream:
 - TextChannel: Untested
 - MessageChannel: Untested
