@@ -8,6 +8,7 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.PrivateChannel;
 import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.entities.VoiceChannel;
 
 public class ChannelInputStream extends InputStream {
@@ -71,5 +72,8 @@ public class ChannelInputStream extends InputStream {
 		listener.close();
 		super.close();
 		closed = true;
+	}
+	public User getLatestUser() {
+		return listener.getLatestUser();
 	}
 }

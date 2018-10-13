@@ -6,6 +6,7 @@ import net.benjaminurquhart.CIO.input.ChannelInputStream;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.entities.Channel;
+import net.dv8tion.jda.core.entities.User;
 
 public class Main {
 
@@ -37,10 +38,17 @@ public class Main {
 		System.out.println("Channel type: " + channel.getType());
 		System.out.println("Ready.");
 		int next;
+		String latest = "";
+		User user;
 		while(loop){
 			try {
 				if(cis.hasNext()){
 					next = cis.read();
+					user = cis.getLatestUser();
+					if(!latest.equals(user.getId())) {
+						latest = user.getId();
+						System.out.print("\n" + channel.getGuild().getMember(user).getEffectiveName() + ":\n");
+					}
 					if(isVoice){
 						System.out.println(next);
 						if(Instant.now().getEpochSecond() - startTime > 5){

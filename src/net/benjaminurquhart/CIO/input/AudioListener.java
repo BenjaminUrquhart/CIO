@@ -7,6 +7,7 @@ import net.dv8tion.jda.core.audio.AudioReceiveHandler;
 import net.dv8tion.jda.core.audio.CombinedAudio;
 import net.dv8tion.jda.core.audio.UserAudio;
 import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.entities.VoiceChannel;
 import net.dv8tion.jda.core.events.channel.voice.VoiceChannelDeleteEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
@@ -14,6 +15,7 @@ import net.dv8tion.jda.core.hooks.ListenerAdapter;
 public class AudioListener extends ListenerAdapter implements AudioReceiveHandler, Listener{
 	
 	private Guild guild;
+	private User latestUser;
 	private ArrayList<Byte> buff;
 	private String channelId;
 	private String guildId;
@@ -49,6 +51,10 @@ public class AudioListener extends ListenerAdapter implements AudioReceiveHandle
 
 	@Override
 	public void handleCombinedAudio(CombinedAudio arg0) {
+		try {
+			latestUser = arg0.getUsers().get(0);
+		}
+		catch(Exception e) {}
 		byte[] arr = arg0.getAudioData(1.0);
 		for(byte b : arr) {
 			buff.add(b);
@@ -97,6 +103,10 @@ public class AudioListener extends ListenerAdapter implements AudioReceiveHandle
 	
 	public boolean isLoaded() {
 		return loaded;
+	}
+	@Override
+	public User getLatestUser() {
+		return latestUser;
 	}
 	
 }

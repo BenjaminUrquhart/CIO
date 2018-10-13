@@ -7,6 +7,7 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.PrivateChannel;
 import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import net.dv8tion.jda.core.events.channel.text.TextChannelDeleteEvent;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
@@ -14,6 +15,7 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 public class TextListener extends ListenerAdapter implements Listener{
 	
 	private JDA jda;
+	private User latestUser;
 	private String channelId;
 	private String guildId;
 	private String buff = "";
@@ -59,6 +61,7 @@ public class TextListener extends ListenerAdapter implements Listener{
 		if(!event.getChannel().getId().equals(channelId)){
 			return;
 		}
+		latestUser = event.getAuthor();
 		buff += event.getMessage().getContentRaw() + "\n";
 	}
 	@Override
@@ -90,5 +93,9 @@ public class TextListener extends ListenerAdapter implements Listener{
 	@Override
 	public boolean isDeleted() {
 		return deleted;
+	}
+	@Override
+	public User getLatestUser() {
+		return latestUser;
 	}
 }
