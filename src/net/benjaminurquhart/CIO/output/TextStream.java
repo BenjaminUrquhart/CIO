@@ -76,4 +76,8 @@ public class TextStream extends ListenerAdapter implements ChannelStream{
 	public boolean isDeleted() {
 		return deleted;
 	}
+	@Override
+	public int getBuffSize() {
+		return buff.length();
+	}
 }

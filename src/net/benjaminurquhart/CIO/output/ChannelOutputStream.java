@@ -47,6 +47,9 @@ public class ChannelOutputStream extends OutputStream{
 	public Channel getChannel() {
 		return this.channel;
 	}
+	public int getBuffSize(){
+		return stream.getBuffSize();
+	}
 	@Override
 	public void write(int data) throws IOException {
 		if(closed) {

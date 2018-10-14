@@ -98,4 +98,9 @@ public class VoiceStream extends ListenerAdapter implements ChannelStream, Audio
 	public boolean isDeleted() {
 		return deleted;
 	}
+
+	@Override
+	public int getBuffSize() {
+		return index + buff.size();
+	}
 }
