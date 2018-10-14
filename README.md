@@ -11,9 +11,9 @@ InputStream:
 - VoiceChannel: NOT Working. Not sure if it's Discord audio being funky again.
 
 OutputStream:
-- TextChannel: Untested
-- MessageChannel: Untested
+- TextChannel: Working
+- MessageChannel: Working
 - PrivateChannel: Untested
-- VoiceChannel: Unimplemented
+- VoiceChannel: Untested
 
 I should probably have read the [InputStream docs](https://docs.oracle.com/javase/8/docs/api/java/io/InputStream.html) first before making this :^)
