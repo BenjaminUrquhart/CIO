@@ -4,7 +4,6 @@ import java.io.IOException;
 
 interface ChannelStream{
 
-	boolean isDeleted();
 	int getBuffSize();
 	void flush() throws IOException;
 	void close() throws IOException;

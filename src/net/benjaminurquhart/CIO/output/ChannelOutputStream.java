@@ -3,6 +3,7 @@ package net.benjaminurquhart.CIO.output;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import net.benjaminurquhart.CIO.common.ChannelDeletionHandler;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Channel;
 import net.dv8tion.jda.core.entities.ChannelType;
@@ -17,21 +18,27 @@ public class ChannelOutputStream extends OutputStream{
 	private boolean closed;
 	private Channel channel;
 	private ChannelStream stream;
+	private ChannelDeletionHandler deletionHandler;
 	
 	public ChannelOutputStream(TextChannel channel) {
 		this.channel = (Channel) channel;
 		this.stream = new TextStream(channel);
+		this.deletionHandler = new ChannelDeletionHandler(channel);
 	}
 	public ChannelOutputStream(MessageChannel channel) {
 		this.channel = (Channel) channel;
 		this.stream = new TextStream(channel);
+		this.deletionHandler = new ChannelDeletionHandler(channel);
 	}
 	public ChannelOutputStream(PrivateChannel channel) {
 		this.channel = (Channel) channel;
 		this.stream = new TextStream(channel);
+		this.deletionHandler = new ChannelDeletionHandler(channel);
 	}
 	public ChannelOutputStream(VoiceChannel channel) {
 		this.channel = (Channel) channel;
+		this.stream = new VoiceStream(channel);
+		this.deletionHandler = new ChannelDeletionHandler(channel);
 	}
 	private boolean hasPerms() {
 		Guild guild = channel.getGuild();
@@ -55,6 +62,9 @@ public class ChannelOutputStream extends OutputStream{
 		if(closed) {
 			throw new IOException("Stream closed");
 		}
+		if(deletionHandler.isDeleted()){
+			throw new IOException("Channel deleted");
+		}
 		if(!hasPerms()) {
 			throw new IOException("Failed to write to stream: Missing Permissions");
 		}
@@ -62,6 +72,12 @@ public class ChannelOutputStream extends OutputStream{
 	}
 	@Override
 	public void flush() throws IOException {
+		if(closed) {
+			throw new IOException("Stream closed");
+		}
+		if(deletionHandler.isDeleted()){
+			throw new IOException("Channel deleted");
+		}
 		stream.flush();
 	}
 	@Override

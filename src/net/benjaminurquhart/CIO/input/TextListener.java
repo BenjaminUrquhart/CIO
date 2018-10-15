@@ -9,7 +9,6 @@ import net.dv8tion.jda.core.entities.PrivateChannel;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
-import net.dv8tion.jda.core.events.channel.text.TextChannelDeleteEvent;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 public class TextListener extends ListenerAdapter implements Listener{
@@ -65,12 +64,6 @@ public class TextListener extends ListenerAdapter implements Listener{
 		buff += event.getMessage().getContentRaw() + "\n";
 	}
 	@Override
-	public void onTextChannelDelete(TextChannelDeleteEvent event) {
-		if(event.getChannel().getId().equals(channelId) && event.getGuild().getId().equals(guildId)) {
-			deleted = true;
-		}
-	}
-	@Override
 	public int getNext() throws IOException {
 		while(buff.isEmpty()){
 			if(deleted) {
@@ -89,10 +82,6 @@ public class TextListener extends ListenerAdapter implements Listener{
 	@Override
 	public void close() {
 		jda.removeEventListener(this);
-	}
-	@Override
-	public boolean isDeleted() {
-		return deleted;
 	}
 	@Override
 	public User getLatestUser() {

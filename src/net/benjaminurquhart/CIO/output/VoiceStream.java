@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import net.dv8tion.jda.core.audio.AudioSendHandler;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.VoiceChannel;
-import net.dv8tion.jda.core.events.channel.voice.VoiceChannelDeleteEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import net.benjaminurquhart.CIO.input.SilenceSaturator;
 
@@ -16,9 +15,6 @@ public class VoiceStream extends ListenerAdapter implements ChannelStream, Audio
 	
 	private ArrayList<Byte> buff;
 	private VoiceChannel channel;
-	private String channelId;
-	private String guildId;
-	private boolean deleted;
 	private boolean isFull;
 	private byte[] latest;
 	private int index;
@@ -31,19 +27,11 @@ public class VoiceStream extends ListenerAdapter implements ChannelStream, Audio
 		this.channel = channel;
 		this.latest = new byte[BUFFSIZE];
 		this.buff = new ArrayList<>();
-		this.channelId = channel.getId();
-		this.guildId = guild.getId();
 		this.index = 0;
 		guild.getAudioManager().setSendingHandler(this);
 		guild.getAudioManager().openAudioConnection(channel);
 	}
 	
-	@Override
-	public void onVoiceChannelDelete(VoiceChannelDeleteEvent event) {
-		if(event.getChannel().getId().equals(channelId) && event.getGuild().getId().equals(guildId)) {
-			deleted = true;
-		}
-	}
 	@Override
 	public boolean canProvide() {
 		return isFull;
@@ -79,8 +67,6 @@ public class VoiceStream extends ListenerAdapter implements ChannelStream, Audio
 		channel.getGuild().getAudioManager().closeAudioConnection();
 		this.buff = null;
 		this.channel = null;
-		this.guildId = null;
-		this.channelId = null;
 	}
 
 	@Override
@@ -92,11 +78,6 @@ public class VoiceStream extends ListenerAdapter implements ChannelStream, Audio
 		if(index == BUFFSIZE) {
 			isFull = true;
 		}
-	}
-
-	@Override
-	public boolean isDeleted() {
-		return deleted;
 	}
 
 	@Override

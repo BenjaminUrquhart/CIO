@@ -9,31 +9,23 @@ import net.dv8tion.jda.core.audio.UserAudio;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.entities.VoiceChannel;
-import net.dv8tion.jda.core.events.channel.voice.VoiceChannelDeleteEvent;
-import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
-public class AudioListener extends ListenerAdapter implements AudioReceiveHandler, Listener{
+public class AudioListener implements AudioReceiveHandler, Listener{
 	
 	private Guild guild;
 	private User latestUser;
 	private ArrayList<Byte> buff;
-	private String channelId;
-	private String guildId;
 	private boolean ready;
 	private boolean loaded;
-	private boolean deleted;
 	private long cached;
 	
 	public AudioListener(VoiceChannel channel) {
 		this.guild = channel.getGuild();
-		this.channelId = channel.getId();
-		this.guildId = guild.getId();
 		if(guild.getAudioManager().isConnected() && guild.getAudioManager().getReceiveHandler() != null) {
 			throw new IllegalStateException("Already receiving audio from this guild!");
 		}
 		this.buff = new ArrayList<>();
 		this.cached = 0;
-		guild.getJDA().addEventListener(this);
 		guild.getAudioManager().setReceivingHandler(this);
 		guild.getAudioManager().setSendingHandler(new SilenceSaturator());
 		guild.getAudioManager().openAudioConnection(channel);
@@ -71,9 +63,6 @@ public class AudioListener extends ListenerAdapter implements AudioReceiveHandle
 	@Override
 	public int getNext() throws IOException{
 		while(!ready || available() == 0){
-			if(deleted) {
-				throw new IOException("Channel deleted");
-			}
 			continue;
 		}
 		cached--;
@@ -85,20 +74,8 @@ public class AudioListener extends ListenerAdapter implements AudioReceiveHandle
 		return (int)cached;
 	}
 	@Override
-	public boolean isDeleted() {
-		return deleted;
-	}
-	@Override
 	public void close() {
 		guild.getAudioManager().closeAudioConnection();
-		guild.getJDA().removeEventListener(this);
-	}
-	
-	@Override
-	public void onVoiceChannelDelete(VoiceChannelDeleteEvent event) {
-		if(event.getChannel().getId().equals(channelId) && event.getGuild().getId().equals(guildId)) {
-			deleted = true;
-		}
 	}
 	
 	public boolean isLoaded() {
