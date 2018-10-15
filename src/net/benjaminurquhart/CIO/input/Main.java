@@ -1,14 +1,18 @@
 package net.benjaminurquhart.CIO.input;
 
-import java.time.Instant;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.SourceDataLine;
 
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
+import net.dv8tion.jda.core.audio.AudioReceiveHandler;
 import net.dv8tion.jda.core.entities.Channel;
 import net.dv8tion.jda.core.entities.User;
 
 public class Main {
 
+	private static final int BUFFSIZE = AudioReceiveHandler.OUTPUT_FORMAT.getFrameSize();
 	public static void main(String[] args) throws Exception{
 		if(args.length < 3){
 			System.out.println("Usage: java -jar path/to/file.jar <token> <guild id> <channel id> [voice/text]");
@@ -22,7 +26,6 @@ public class Main {
 			isVoice = args[3].toLowerCase().equals("voice");
 		}
 		JDA jda = new JDABuilder(token).setAudioEnabled(isVoice).build().awaitReady();
-		long startTime = Instant.now().getEpochSecond();
 		ChannelInputStream cis;
 		boolean loop = true;
 		if(isVoice){
@@ -36,9 +39,20 @@ public class Main {
 		System.out.println("Channel: " + channel.getName());
 		System.out.println("Channel type: " + channel.getType());
 		System.out.println("Ready.");
+		
 		int next;
 		String latest = "";
 		User user;
+		byte[] voiceData = new byte[BUFFSIZE];
+		int numRead = 0;
+		DataLine.Info info = null;
+		SourceDataLine line = null;
+		if(isVoice){
+			info = new DataLine.Info(SourceDataLine.class, AudioReceiveHandler.OUTPUT_FORMAT);
+			line = (SourceDataLine) AudioSystem.getLine(info);
+			line.open(AudioReceiveHandler.OUTPUT_FORMAT);
+			line.start();
+		}
 		while(loop){
 			try {
 				if(cis.hasNext()){
@@ -49,11 +63,14 @@ public class Main {
 						System.out.print(channel.getGuild().getMember(user).getEffectiveName() + ": ");
 					}
 					if(isVoice){
-						System.out.println(next);
-						if(Instant.now().getEpochSecond() - startTime > 5){
-							cis.close();
-							loop = false;
+						numRead = cis.read(voiceData, 0, BUFFSIZE);
+						while(numRead < BUFFSIZE){
+							if(numRead < 0){
+								break;
+							}
+							numRead = cis.read(voiceData, numRead, BUFFSIZE - numRead);
 						}
+						line.write(voiceData, 0, BUFFSIZE);
 					}
 					else{
 						System.out.print((char)next);
