@@ -3,6 +3,8 @@ Input/Output Stream wrapper for JDA Channel objects
 
 Fair warning: for some reason this does not work with the `java.util.Scanner` class.
 
+NOTE: This was designed for JDA 3. I may update it to JDA 4 in the future.
+
 InputStream:
 - TextChannel: Working
 - MessageChannel: Working
