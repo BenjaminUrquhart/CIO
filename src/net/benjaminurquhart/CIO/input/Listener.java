@@ -2,7 +2,7 @@ package net.benjaminurquhart.CIO.input;
 
 import java.io.IOException;
 
-import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.api.entities.User;
 
 interface Listener{
 

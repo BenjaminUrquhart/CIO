@@ -1,13 +1,13 @@
 package net.benjaminurquhart.CIO.common;
 
-import net.dv8tion.jda.core.entities.ChannelType;
-import net.dv8tion.jda.core.entities.MessageChannel;
-import net.dv8tion.jda.core.entities.PrivateChannel;
-import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.VoiceChannel;
-import net.dv8tion.jda.core.events.channel.text.TextChannelDeleteEvent;
-import net.dv8tion.jda.core.events.channel.voice.VoiceChannelDeleteEvent;
-import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.entities.ChannelType;
+import net.dv8tion.jda.api.entities.MessageChannel;
+//import net.dv8tion.jda.api.entities.PrivateChannel;
+import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.VoiceChannel;
+import net.dv8tion.jda.api.events.channel.text.TextChannelDeleteEvent;
+import net.dv8tion.jda.api.events.channel.voice.VoiceChannelDeleteEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public class ChannelDeletionHandler extends ListenerAdapter {
 
@@ -25,10 +25,11 @@ public class ChannelDeletionHandler extends ListenerAdapter {
 			this.guildId = ((TextChannel)channel).getGuild().getId();
 		}
 	}
+	/*
 	public ChannelDeletionHandler(PrivateChannel channel){
 		this.channelId = channel.getId();
 		this.guildId = null;
-	}
+	}*/
 	public ChannelDeletionHandler(VoiceChannel channel){
 		this.channelId = channel.getId();
 		this.guildId = channel.getGuild().getId();

@@ -1,12 +1,13 @@
 package net.benjaminurquhart.CIO.input;
 
+import java.nio.ByteBuffer;
 import java.time.Instant;
 
-import net.dv8tion.jda.core.audio.AudioSendHandler;
+import net.dv8tion.jda.api.audio.AudioSendHandler;
 
 public class SilenceSaturator implements AudioSendHandler{
 	
-	public static final byte[] silence = new byte[3840];
+	public static final byte[] SILENCE = new byte[3840];
 	public boolean send;
 	public long startTime;
 	
@@ -26,8 +27,8 @@ public class SilenceSaturator implements AudioSendHandler{
 	}
 
 	@Override
-	public byte[] provide20MsAudio() {
-		return silence;
+	public ByteBuffer provide20MsAudio() {
+		return ByteBuffer.wrap(SILENCE);
 	}
 
 }

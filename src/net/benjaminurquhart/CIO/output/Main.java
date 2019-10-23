@@ -1,8 +1,8 @@
 package net.benjaminurquhart.CIO.output;
 
-import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.JDABuilder;
-import net.dv8tion.jda.core.entities.Channel;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.entities.GuildChannel;
 
 public class Main {
 
@@ -18,9 +18,9 @@ public class Main {
 		if(isVoice){
 			throw new UnsupportedOperationException("Cannot create a voice output stream in demo mode");
 		}
-		JDA jda = new JDABuilder(token).setAudioEnabled(isVoice).build().awaitReady();
+		JDA jda = new JDABuilder(token).build().awaitReady();
 		ChannelOutputStream cos = new ChannelOutputStream(jda.getGuildById(guildId).getTextChannelById(channelId));
-		Channel channel = cos.getChannel();
+		GuildChannel channel = cos.getChannel();
 		System.out.println("Guild: " + channel.getGuild().getName());
 		System.out.println("Channel: " + channel.getName());
 		System.out.println("Channel type: " + channel.getType());

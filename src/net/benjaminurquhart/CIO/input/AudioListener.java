@@ -2,26 +2,32 @@ package net.benjaminurquhart.CIO.input;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
-import net.dv8tion.jda.core.audio.AudioReceiveHandler;
-import net.dv8tion.jda.core.audio.CombinedAudio;
-import net.dv8tion.jda.core.audio.UserAudio;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.core.entities.VoiceChannel;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.audio.AudioReceiveHandler;
+import net.dv8tion.jda.api.audio.CombinedAudio;
+import net.dv8tion.jda.api.audio.UserAudio;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.VoiceChannel;
 
 public class AudioListener implements AudioReceiveHandler, Listener{
 	
-	private Guild guild;
+	private JDA jda;
+	
+	private String guildID;
 	private User latestUser;
-	private ArrayList<Byte> buff;
+	private List<Byte> buff;
 	private boolean ready;
 	private boolean loaded;
 	private long cached;
 	
 	public AudioListener(VoiceChannel channel) {
-		this.guild = channel.getGuild();
-		if(guild.getAudioManager().isConnected() && guild.getAudioManager().getReceiveHandler() != null) {
+		Guild guild = channel.getGuild();
+		this.guildID = guild.getId();
+		this.jda = channel.getJDA();
+		if(guild.getAudioManager().isConnected() && guild.getAudioManager().getReceivingHandler() != null) {
 			throw new IllegalStateException("Already receiving audio from this guild!");
 		}
 		this.buff = new ArrayList<>();
@@ -75,7 +81,7 @@ public class AudioListener implements AudioReceiveHandler, Listener{
 	}
 	@Override
 	public void close() {
-		guild.getAudioManager().closeAudioConnection();
+		jda.getGuildById(guildID).getAudioManager().closeAudioConnection();
 	}
 	
 	public boolean isLoaded() {

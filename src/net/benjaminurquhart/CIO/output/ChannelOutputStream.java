@@ -4,39 +4,27 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import net.benjaminurquhart.CIO.common.ChannelDeletionHandler;
-import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Channel;
-import net.dv8tion.jda.core.entities.ChannelType;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.MessageChannel;
-import net.dv8tion.jda.core.entities.PrivateChannel;
-import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.VoiceChannel;
+import net.dv8tion.jda.api.entities.VoiceChannel;
+import net.dv8tion.jda.api.entities.GuildChannel;
+import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.ChannelType;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.Permission;
 
 public class ChannelOutputStream extends OutputStream{
 
 	private boolean closed;
-	private Channel channel;
+	private GuildChannel channel;
 	private ChannelStream stream;
 	private ChannelDeletionHandler deletionHandler;
 	
 	public ChannelOutputStream(TextChannel channel) {
-		this.channel = (Channel) channel;
-		this.stream = new TextStream(channel);
-		this.deletionHandler = new ChannelDeletionHandler(channel);
-	}
-	public ChannelOutputStream(MessageChannel channel) {
-		this.channel = (Channel) channel;
-		this.stream = new TextStream(channel);
-		this.deletionHandler = new ChannelDeletionHandler(channel);
-	}
-	public ChannelOutputStream(PrivateChannel channel) {
-		this.channel = (Channel) channel;
+		this.channel = channel;
 		this.stream = new TextStream(channel);
 		this.deletionHandler = new ChannelDeletionHandler(channel);
 	}
 	public ChannelOutputStream(VoiceChannel channel) {
-		this.channel = (Channel) channel;
+		this.channel = channel;
 		this.stream = new VoiceStream(channel);
 		this.deletionHandler = new ChannelDeletionHandler(channel);
 	}
@@ -51,7 +39,7 @@ public class ChannelOutputStream extends OutputStream{
 		//There's a canTalk() method in the MessageChannel class that does this. I don't feel like casting, however.
 		return guild.getSelfMember().hasPermission(channel, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ);
 	}
-	public Channel getChannel() {
+	public GuildChannel getChannel() {
 		return this.channel;
 	}
 	public int getBuffSize(){

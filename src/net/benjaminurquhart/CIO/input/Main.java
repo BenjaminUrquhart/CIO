@@ -4,11 +4,11 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.SourceDataLine;
 
-import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.JDABuilder;
-import net.dv8tion.jda.core.audio.AudioReceiveHandler;
-import net.dv8tion.jda.core.entities.Channel;
-import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.audio.AudioReceiveHandler;
+import net.dv8tion.jda.api.entities.GuildChannel;
+import net.dv8tion.jda.api.entities.User;
 
 public class Main {
 
@@ -25,7 +25,7 @@ public class Main {
 		if(args.length == 4){
 			isVoice = args[3].toLowerCase().equals("voice");
 		}
-		JDA jda = new JDABuilder(token).setAudioEnabled(isVoice).build().awaitReady();
+		JDA jda = new JDABuilder(token).build().awaitReady();
 		ChannelInputStream cis;
 		boolean loop = true;
 		if(isVoice){
@@ -34,7 +34,7 @@ public class Main {
 		else{
 			cis = new ChannelInputStream(jda.getGuildById(guildId).getTextChannelById(channelId), true);
 		}
-		Channel channel = cis.getChannel();
+		GuildChannel channel = cis.getChannel();
 		System.out.println("Guild: " + channel.getGuild().getName());
 		System.out.println("Channel: " + channel.getName());
 		System.out.println("Channel type: " + channel.getType());
@@ -50,7 +50,7 @@ public class Main {
 		if(isVoice){
 			info = new DataLine.Info(SourceDataLine.class, AudioReceiveHandler.OUTPUT_FORMAT);
 			line = (SourceDataLine) AudioSystem.getLine(info);
-			line.open(AudioReceiveHandler.OUTPUT_FORMAT);
+			line.open(AudioReceiveHandler.OUTPUT_FORMAT, BUFFSIZE);
 			line.start();
 		}
 		while(loop){
@@ -76,7 +76,7 @@ public class Main {
 						System.out.print((char)next);
 					}
 				}
-				Thread.sleep(10);
+				//Thread.sleep(10);
 			}
 			catch(InterruptedException e) {
 				e.printStackTrace();

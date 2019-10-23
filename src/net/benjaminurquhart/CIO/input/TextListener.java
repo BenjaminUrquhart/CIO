@@ -2,14 +2,14 @@ package net.benjaminurquhart.CIO.input;
 
 import java.io.IOException;
 
-import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.MessageChannel;
-import net.dv8tion.jda.core.entities.PrivateChannel;
-import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.core.hooks.ListenerAdapter;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.MessageChannel;
+//import net.dv8tion.jda.api.entities.PrivateChannel;
+import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 public class TextListener extends ListenerAdapter implements Listener{
 	
@@ -17,8 +17,8 @@ public class TextListener extends ListenerAdapter implements Listener{
 	private User latestUser;
 	private String channelId;
 	private String guildId;
-	private String buff = "";
-	private boolean deleted;
+	private StringBuffer buffer;
+	private volatile boolean deleted;
 	private boolean isPrivate;
 	private boolean ignoreBots;
 	
@@ -29,6 +29,7 @@ public class TextListener extends ListenerAdapter implements Listener{
 		this.isPrivate = false;
 		this.ignoreBots = ignoreBots;
 		this.jda.addEventListener(this);
+		this.buffer = new StringBuffer();
 	}
 	
 	protected TextListener(MessageChannel channel, Guild guild, boolean ignoreBots) {
@@ -38,17 +39,8 @@ public class TextListener extends ListenerAdapter implements Listener{
 		this.isPrivate = (guild == null);
 		this.ignoreBots = ignoreBots;
 		this.jda.addEventListener(this);
+		this.buffer = new StringBuffer();
 	}
-	
-	protected TextListener(PrivateChannel channel, boolean ignoreBots) {
-		this.channelId = channel.getId();
-		this.guildId = null;
-		this.jda = channel.getJDA();
-		this.isPrivate = true;
-		this.ignoreBots = ignoreBots;
-		this.jda.addEventListener(this);
-	}
-	
 	@Override
 	public void onMessageReceived(MessageReceivedEvent event) {
 		if(ignoreBots && event.getAuthor().isBot()){
@@ -61,23 +53,24 @@ public class TextListener extends ListenerAdapter implements Listener{
 			return;
 		}
 		latestUser = event.getAuthor();
-		buff += event.getMessage().getContentRaw() + "\n";
+		buffer.append(event.getMessage().getContentRaw());
+		buffer.append("\n");
 	}
 	@Override
 	public int getNext() throws IOException {
-		while(buff.isEmpty()){
+		while(buffer.length() == 0){
 			if(deleted) {
 				throw new IOException("Channel deleted");
 			}
 			continue;
 		}
-		int next = (int)buff.charAt(0);
-		buff = buff.substring(1);
+		int next = buffer.charAt(0);
+		buffer.deleteCharAt(0);
 		return next;
 	}
 	@Override
 	public int available() {
-		return buff.length();
+		return buffer.length();
 	}
 	@Override
 	public void close() {

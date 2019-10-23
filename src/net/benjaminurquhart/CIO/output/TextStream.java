@@ -2,27 +2,18 @@ package net.benjaminurquhart.CIO.output;
 
 import java.io.IOException;
 
-import net.dv8tion.jda.core.entities.MessageChannel;
-import net.dv8tion.jda.core.entities.PrivateChannel;
-import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public class TextStream extends ListenerAdapter implements ChannelStream{
 
-	private MessageChannel channel;
-	private String buff = "";
-	private boolean deleted;
+	private TextChannel channel;
+	private StringBuffer buffer;
+	private volatile boolean deleted;
 	
-	protected TextStream(MessageChannel channel) {
-		this.channel = channel;
-		channel.getJDA().addEventListener(this);
-	}
-	protected TextStream(PrivateChannel channel) {
-		this.channel = (MessageChannel) channel;
-		channel.getJDA().addEventListener(this);
-	}
 	protected TextStream(TextChannel channel) {
-		this.channel = (MessageChannel) channel;
+		this.channel = channel;
+		this.buffer = new StringBuffer();
 		channel.getJDA().addEventListener(this);
 	}
 	@Override
@@ -30,34 +21,34 @@ public class TextStream extends ListenerAdapter implements ChannelStream{
 		if(deleted) {
 			throw new IOException("Channel deleted");
 		}
-		if(buff == null) {
+		if(buffer == null) {
 			throw new IOException("Stream closed");
 		}
-		while(buff.length() > 2000) {
-			channel.sendMessage(buff.substring(0, 2000)).queue();
-			buff = buff.substring(2000);
+		while(buffer.length() > 2000) {
+			channel.sendMessage(buffer.substring(0, 2000)).queue();
+			buffer.delete(0, 2000);
 		}
-		channel.sendMessage(buff).queue();
-		buff = "";
+		channel.sendMessage(buffer).queue();
+		buffer.delete(0, buffer.length());
 	}
 	@Override
 	public void write(byte b) throws IOException {
 		if(deleted) {
-			buff = null;
+			buffer = null;
 			throw new IOException("Channel deleted");
 		}
-		if(buff == null) {
+		if(buffer == null) {
 			throw new IOException("Stream closed");
 		}
-		buff += (char)b;
+		buffer.append((char)b);
 	}
 	@Override
 	public void close() throws IOException {
 		this.flush();
-		buff = null;
+		buffer = null;
 	}
 	@Override
 	public int getBuffSize() {
-		return buff.length();
+		return buffer.length();
 	}
 }

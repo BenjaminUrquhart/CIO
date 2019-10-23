@@ -1,20 +1,22 @@
 package net.benjaminurquhart.CIO.output;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.List;
 
-import net.dv8tion.jda.core.audio.AudioSendHandler;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.VoiceChannel;
-import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.audio.AudioSendHandler;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.VoiceChannel;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.benjaminurquhart.CIO.input.SilenceSaturator;
 
 public class VoiceStream extends ListenerAdapter implements ChannelStream, AudioSendHandler{
 
 	public static final int BUFFSIZE = 3840;
 	
-	private ArrayList<Byte> buff;
 	private VoiceChannel channel;
+	private List<Byte> buff;
 	private boolean isFull;
 	private byte[] latest;
 	private int index;
@@ -38,7 +40,7 @@ public class VoiceStream extends ListenerAdapter implements ChannelStream, Audio
 	}
 
 	@Override
-	public byte[] provide20MsAudio() {
+	public ByteBuffer provide20MsAudio() {
 		if(isFull) {
 			byte[] out = latest;
 			latest = new byte[BUFFSIZE];
@@ -50,10 +52,10 @@ public class VoiceStream extends ListenerAdapter implements ChannelStream, Audio
 				}
 				catch(Exception e) {}
 			}
-			return out;
+			return ByteBuffer.wrap(out);
 		}
 		else {
-			return SilenceSaturator.silence;
+			return ByteBuffer.wrap(SilenceSaturator.SILENCE);
 		}
 	}
 
